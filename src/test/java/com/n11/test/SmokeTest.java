@@ -1,37 +1,36 @@
 package com.n11.test;
 
+import com.n11.test.pages.HomePage;
+import com.n11.test.pages.LoginPage;
+import org.junit.After;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 
-public class SmokeTest {
+import static org.junit.Assert.assertTrue;
+
+public class SmokeTest extends BaseTest {
 
     @Test
-    public void openWebSite() {
+    public void shouldLogin() {
+        HomePage homePage = new HomePage();
+        homePage.clickToLogin(driver);
+
+        LoginPage loginPage = new LoginPage();
+        loginPage.login(driver);
+
+        assertTrue(homePage.getUserName(driver).equals("Test Bau"));
+    }
+
+    @Test
+    public void shouldRegister() {
         System.setProperty("webdriver.chrome.driver", "/Users/taylan.derinbay/Downloads/chromedriver");
         WebDriver driver = new ChromeDriver();
-        driver.get("https://www.n11.com");
 
-        /*WebElement signInButton = driver.findElement(By.cssSelector(".btnSignIn"));
-        signInButton.click();
-
-        WebElement emailTextBox = driver.findElement(By.id("email"));
-        WebElement passwordTextBox = driver.findElement(By.id("password"));
-//        WebElement passwordTextBox = driver.findElement(By.cssSelector("#password"));
-//        WebElement passwordTextBox = driver.findElement(By.name("password"));
-        WebElement loginButton = driver.findElement(By.id("loginButton"));
-
-        emailTextBox.sendKeys("testbau@mailinator.com");
-        passwordTextBox.sendKeys("123qwe");
-        loginButton.click();
-
-        WebElement userElement = driver.findElement(By.className("user"));
-
-        Assert.assertEquals("Test Bau", userElement.getText());
-        Assert.assertTrue(userElement.getText().equals("Test Bau"));*/
         WebElement registerBtn = driver.findElement(By.cssSelector(".btnSignUp"));
         registerBtn.click();
         WebElement nameTextBox = driver.findElement(By.id("firstName"));
@@ -52,6 +51,7 @@ public class SmokeTest {
         acceptContractCheckbox.click();
         submitButton.click();
         WebElement userElement = driver.findElement(By.className("user"));
-        Assert.assertTrue(userElement.getText().equals("Bau Test"));
+        assertTrue(userElement.getText().equals("Bau Test"));
+        driver.quit();
     }
 }
