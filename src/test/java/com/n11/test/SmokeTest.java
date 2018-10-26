@@ -2,6 +2,8 @@ package com.n11.test;
 
 import com.n11.test.pages.HomePage;
 import com.n11.test.pages.LoginPage;
+import com.n11.test.pages.RegisterPage;
+import jdk.nashorn.internal.runtime.regexp.joni.Regex;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -18,9 +20,8 @@ public class SmokeTest extends BaseTest {
     @Test
     public void shouldLogin() {
         HomePage homePage = new HomePage();
-        homePage.clickToLogin(driver);
+        LoginPage loginPage = homePage.clickToLogin(driver);
 
-        LoginPage loginPage = new LoginPage();
         loginPage.login(driver);
 
         assertTrue(homePage.getUserName(driver).equals("Test Bau"));
@@ -28,30 +29,21 @@ public class SmokeTest extends BaseTest {
 
     @Test
     public void shouldRegister() {
-        System.setProperty("webdriver.chrome.driver", "/Users/taylan.derinbay/Downloads/chromedriver");
-        WebDriver driver = new ChromeDriver();
+        HomePage homePage = new HomePage();
+        homePage.clickRegisterButton(driver);
 
-        WebElement registerBtn = driver.findElement(By.cssSelector(".btnSignUp"));
-        registerBtn.click();
-        WebElement nameTextBox = driver.findElement(By.id("firstName"));
-        WebElement surnameTextBox = driver.findElement(By.id("lastName"));
-        WebElement registrationEmailTextBox = driver.findElement(By.id("registrationEmail"));
-        WebElement registrationPasswordTextBox = driver.findElement(By.id("registrationPassword"));
-        WebElement passwordAgainTextBox = driver.findElement(By.id("passwordAgain"));
-        WebElement genderMaleRadioBtn = driver.findElement(By.id("genderMale"));
-        WebElement acceptContractCheckbox = driver.findElement(By.id("acceptContract"));
-        WebElement submitButton = driver.findElement(By.id("submitButton"));
+        RegisterPage registerPage = new RegisterPage();
+        registerPage.register(driver);
 
-        nameTextBox.sendKeys("Bau");
-        surnameTextBox.sendKeys("Test");
-        registrationEmailTextBox.sendKeys("testbau2@mailinator.com");
-        registrationPasswordTextBox.sendKeys("qwe1234");
-        passwordAgainTextBox.sendKeys("qwe1234");
-        genderMaleRadioBtn.click();
-        acceptContractCheckbox.click();
-        submitButton.click();
-        WebElement userElement = driver.findElement(By.className("user"));
-        assertTrue(userElement.getText().equals("Bau Test"));
-        driver.quit();
+        assertTrue(homePage.getUserName(driver).equals("Bau Test"));
+    }
+
+    @Test
+    public void shouldNotLoginWithWrongPassword() {
+        HomePage homePage = new HomePage();
+        LoginPage loginPage = homePage.clickToLogin(driver);
+
+        loginPage.login(driver, "adskjdh");
+        assertTrue(loginPage.isErrorDisplayed(driver, "password"));
     }
 }

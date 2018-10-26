@@ -2,17 +2,24 @@ package com.n11.test.pages;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
 
 public class LoginPage {
 
-    public void login(WebDriver driver) {
-        WebElement emailTextBox = driver.findElement(By.id("email"));
-        WebElement passwordTextBox = driver.findElement(By.id("password"));
-        WebElement loginButton = driver.findElement(By.id("loginButton"));
+    By emailBy = By.id("email");
+    By passwordBy = By.id("password");
+    By loginButtonBy = By.id("loginButton");
 
-        emailTextBox.sendKeys("testbau@mailinator.com");
-        passwordTextBox.sendKeys("123qwe");
-        loginButton.click();
+    public void login(WebDriver driver) {
+        login(driver, "123qwe");
+    }
+
+    public void login(WebDriver driver, String password) {
+        driver.findElement(emailBy).sendKeys("testbau@mailinator.com");
+        driver.findElement(passwordBy).sendKeys(password);
+        driver.findElement(loginButtonBy).click();
+    }
+
+    public boolean isErrorDisplayed(WebDriver driver, String warning) {
+        return driver.findElement(By.cssSelector("[data-errormessagefor=" + warning + "]")).isDisplayed();
     }
 }

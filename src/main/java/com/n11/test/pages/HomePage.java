@@ -6,14 +6,18 @@ import org.openqa.selenium.WebElement;
 
 public class HomePage {
 
-    public void clickToLogin(WebDriver driver) {
-        WebElement signInButton = driver.findElement(By.cssSelector(".btnSignIn"));
-        signInButton.click();
+    public LoginPage clickToLogin(WebDriver driver) {
+        driver.findElement(By.cssSelector(".btnSignIn")).click();
+        return new LoginPage();
     }
 
     public String getUserName(WebDriver driver) {
         return driver
                 .findElement(By.className("user"))
                 .getText();
+    }
+
+    public void clickRegisterButton(WebDriver driver) {
+        driver.findElement(By.cssSelector(".btnSignUp")).click();
     }
 }
