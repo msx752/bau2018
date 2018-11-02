@@ -10,6 +10,9 @@ public class HomePage extends BasePage {
     }
 
     By btnSignUp = By.cssSelector(".btnSignUp");
+    By searchInput = By.id("searchData");
+    By searchButton = By.className("iconSearch");
+    By firstProduct = By.cssSelector(".catGroup .tabPanel.active li");
 
     public LoginPage clickToLogin() {
         driver.findElement(By.cssSelector(".btnSignIn")).click();
@@ -25,5 +28,16 @@ public class HomePage extends BasePage {
     public RegisterPage clickRegisterButton() {
         clickTo(btnSignUp);
         return new RegisterPage(driver);
+    }
+
+    public SearchResultPage search(String keyword) {
+        write(searchInput, keyword);
+        clickTo(searchButton);
+        return new SearchResultPage(driver);
+    }
+
+    public ProductPage getFirstProduct() {
+        driver.findElement(firstProduct).click();
+        return new ProductPage(driver);
     }
 }

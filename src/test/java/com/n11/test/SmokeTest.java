@@ -1,8 +1,6 @@
 package com.n11.test;
 
-import com.n11.test.pages.HomePage;
-import com.n11.test.pages.LoginPage;
-import com.n11.test.pages.RegisterPage;
+import com.n11.test.pages.*;
 import org.junit.Test;
 
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -39,5 +37,26 @@ public class SmokeTest extends BaseTest {
 
         loginPage.login("adskjdh");
         assertThat("When a buyer tries to login with invalid password, ", loginPage.isErrorDisplayed("password"));
+    }
+
+    @Test
+    public void shouldSearch() {
+        HomePage homePage = new HomePage(driver);
+        LoginPage loginPage = homePage.clickToLogin();
+
+        loginPage.login();
+        SearchResultPage resultPage = homePage.search("samsung");
+        assertThat("When a buyer searchs a keyword", resultPage.getResultText(), is(equalTo("Samsung")));
+    }
+
+    @Test
+    public void shouldAddToCart() {
+        HomePage homePage = new HomePage(driver);
+        ProductPage productPage = homePage.getFirstProduct();
+        String productName = productPage.getProductName();
+        productPage.addToCart();
+
+        MyCartPage myCartPage = productPage.goToCart();
+        assertThat("When a buyer adds a product to cart, ", myCartPage.getProductName(), is(equalTo(productName)));
     }
 }
