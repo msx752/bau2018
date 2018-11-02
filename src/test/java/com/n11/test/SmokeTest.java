@@ -5,7 +5,9 @@ import com.n11.test.pages.LoginPage;
 import com.n11.test.pages.RegisterPage;
 import org.junit.Test;
 
-import static org.junit.Assert.assertTrue;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 public class SmokeTest extends BaseTest {
 
@@ -16,7 +18,7 @@ public class SmokeTest extends BaseTest {
 
         loginPage.login();
 
-        assertTrue(homePage.getUserName().equals("Test Bau"));
+        assertThat("When a buyer login, ", homePage.getUserName(), equalTo("Test Bau"));
     }
 
     @Test
@@ -27,7 +29,7 @@ public class SmokeTest extends BaseTest {
         RegisterPage registerPage = new RegisterPage(driver);
         registerPage.register();
 
-        assertTrue(homePage.getUserName().equals("Bau Test"));
+        assertThat("When a buyer register, ", homePage.getUserName(), is(equalTo("Bau Test")));
     }
 
     @Test
@@ -36,6 +38,6 @@ public class SmokeTest extends BaseTest {
         LoginPage loginPage = homePage.clickToLogin();
 
         loginPage.login("adskjdh");
-        assertTrue(loginPage.isErrorDisplayed("password"));
+        assertThat("When a buyer tries to login with invalid password, ", loginPage.isErrorDisplayed("password"));
     }
 }
