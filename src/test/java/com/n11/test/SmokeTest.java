@@ -1,57 +1,62 @@
 package com.n11.test;
 
-import com.n11.test.pages.HomePage;
-import com.n11.test.pages.LoginPage;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
+import com.n11.test.pages.*;
 import org.junit.Test;
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.chrome.ChromeDriver;
 
-import static org.junit.Assert.assertTrue;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 public class SmokeTest extends BaseTest {
 
     @Test
     public void shouldLogin() {
-        HomePage homePage = new HomePage();
-        homePage.clickToLogin(driver);
+        HomePage homePage = new HomePage(driver);
+        LoginPage loginPage = homePage.clickToLogin();
 
-        LoginPage loginPage = new LoginPage();
-        loginPage.login(driver);
+        loginPage.login();
 
-        assertTrue(homePage.getUserName(driver).equals("Test Bau"));
+        assertThat("When a buyer login, ", homePage.getUserName(), equalTo("Test Bau"));
     }
 
     @Test
     public void shouldRegister() {
-        System.setProperty("webdriver.chrome.driver", "/Users/taylan.derinbay/Downloads/chromedriver");
-        WebDriver driver = new ChromeDriver();
+        HomePage homePage = new HomePage(driver);
+        homePage.clickRegisterButton();
 
-        WebElement registerBtn = driver.findElement(By.cssSelector(".btnSignUp"));
-        registerBtn.click();
-        WebElement nameTextBox = driver.findElement(By.id("firstName"));
-        WebElement surnameTextBox = driver.findElement(By.id("lastName"));
-        WebElement registrationEmailTextBox = driver.findElement(By.id("registrationEmail"));
-        WebElement registrationPasswordTextBox = driver.findElement(By.id("registrationPassword"));
-        WebElement passwordAgainTextBox = driver.findElement(By.id("passwordAgain"));
-        WebElement genderMaleRadioBtn = driver.findElement(By.id("genderMale"));
-        WebElement acceptContractCheckbox = driver.findElement(By.id("acceptContract"));
-        WebElement submitButton = driver.findElement(By.id("submitButton"));
+        RegisterPage registerPage = new RegisterPage(driver);
+        registerPage.register();
 
-        nameTextBox.sendKeys("Bau");
-        surnameTextBox.sendKeys("Test");
-        registrationEmailTextBox.sendKeys("testbau2@mailinator.com");
-        registrationPasswordTextBox.sendKeys("qwe1234");
-        passwordAgainTextBox.sendKeys("qwe1234");
-        genderMaleRadioBtn.click();
-        acceptContractCheckbox.click();
-        submitButton.click();
-        WebElement userElement = driver.findElement(By.className("user"));
-        assertTrue(userElement.getText().equals("Bau Test"));
-        driver.quit();
+        assertThat("When a buyer register, ", homePage.getUserName(), is(equalTo("Bau Test")));
+    }
+
+    @Test
+    public void shouldNotLoginWithWrongPassword() {
+        HomePage homePage = new HomePage(driver);
+        LoginPage loginPage = homePage.clickToLogin();
+
+        loginPage.login("adskjdh");
+        assertThat("When a buyer tries to login with invalid password, ", loginPage.isErrorDisplayed("password"));
+    }
+
+    @Test
+    public void shouldSearch() {
+        HomePage homePage = new HomePage(driver);
+        LoginPage loginPage = homePage.clickToLogin();
+
+        loginPage.login();
+        SearchResultPage resultPage = homePage.search("samsung");
+        assertThat("When a buyer searchs a keyword", resultPage.getResultText(), is(equalTo("Samsung")));
+    }
+
+    @Test
+    public void shouldAddToCart() {
+        HomePage homePage = new HomePage(driver);
+        ProductPage productPage = homePage.getFirstProduct();
+        String productName = productPage.getProductName();
+        productPage.addToCart();
+
+        MyCartPage myCartPage = productPage.goToCart();
+        assertThat("When a buyer adds a product to cart, ", myCartPage.getProductName(), is(equalTo(productName)));
     }
 }
